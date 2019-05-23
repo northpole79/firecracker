@@ -1,0 +1,27 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: fcuvm/dev:v6
+    branches:
+      only:
+        - /tkgil\/.*/
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: copy repo
+          command: cp -rf ~/repo/* /firecracker
+      - run:
+          name: copy repo .cargo
+          command: cp -rf ~/repo/.cargo /firecracker
+      - run:
+          name: ensure cargo registry directory is created
+          command: mkdir -p /firecracker/build/cargo_registry
+      - run:
+          name: ensure cargo target directory is created
+          command: mkdir -p /firecracker/build/cargo_target
+      - run:
+          name: Run cargo build for firecracker
+          command: cd /firecracker && cargo build --target-dir /firecracker/build/cargo_target
